@@ -1,10 +1,13 @@
 package com.study.kotlincalc
 
 // lv.??
+// 추가해야 할 거: 직접 식 받아서 계산(3개 이상의 수 계산, 우선 순위, 괄호 구분)
 open class Calculator(private val num1: Int, private val num2: Int) {
 
     private var menu: Int = -1
     private lateinit var operation: AbstractOperation
+    private val signList: List<Char> = listOf('+','-','*','/','%','(',')',)
+    private val str: String = ""
 
     fun exe() {
         var firstExe = true
@@ -13,12 +16,12 @@ open class Calculator(private val num1: Int, private val num2: Int) {
         while(true) {
             if(!firstExe) {
                 println("추가 값을 입력해주세요.")
-                secondNum = readln().toInt()
+                secondNum = if(readln() != "") readln().toInt() else 0
             }
             println("다음과 같은 숫자를 입력하여, 조작할 수 있습니다.")
             println("현재 값 설정은 ${firstNum}, ${secondNum}입니다.")
             println("입력: 1 = 더하기, 2 = 빼기, 3 = 곱하기, 4 = 나누기, 5 = 나머지 값 구하기, -1 = 종료")
-            menu = readln().toInt()
+            menu = if(readln() != "") readln().toInt() else 0
             when(menu) {
                 1 -> operation = AddOperation(firstNum, secondNum)
                 2 -> operation = SubOperation(firstNum, secondNum)
@@ -29,8 +32,10 @@ open class Calculator(private val num1: Int, private val num2: Int) {
                 else -> operation = WrongOperation(menu)
             }
             println("값 : ${operation.printRes()}")
-            firstNum = if(menu in 1..5) operation.printRes().toInt() else firstNum
-            firstExe = false
+            if(menu in 1..5) {
+                firstNum = operation.printRes().toInt()
+                firstExe = false
+            }
         }
         print("종료됐습니다.")
     }
